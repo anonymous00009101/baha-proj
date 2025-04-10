@@ -2,6 +2,7 @@
   "name": "itdiction",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://anonymous00009101.github.io/baha-proj",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -11,7 +12,6 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.8.4",
     "body-parser": "^2.2.0",
     "bootstrap": "^5.3.5",
     "cors": "^2.8.5",
@@ -29,7 +29,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server": "node server.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -56,6 +58,7 @@
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.57.1",
-    "eslint-config-google": "^0.14.0"
+    "eslint-config-google": "^0.14.0",
+    "gh-pages": "^6.3.0"
   }
 }

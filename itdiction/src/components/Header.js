@@ -1,6 +1,6 @@
 // filepath: src/components/Header.js
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
     AppBar,
     Toolbar,
@@ -13,8 +13,9 @@ import {
 } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const Header = ({ title, isAuthenticated, user }) => {
+const Header = ({ title, isAuthenticated, setIsAuthenticated }) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const navigate = useNavigate();
 
     const handleMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -22,6 +23,21 @@ const Header = ({ title, isAuthenticated, user }) => {
 
     const handleMenuClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        // Удаляем токены из localStorage
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+
+        // Обновляем состояние аутентификации
+        setIsAuthenticated(false);
+
+        // Закрываем меню
+        handleMenuClose();
+
+        // Перенаправляем на страницу входа
+        navigate('/login');
     };
 
     return (
@@ -73,7 +89,7 @@ const Header = ({ title, isAuthenticated, user }) => {
                                 <MenuItem component={Link} to="/profile" onClick={handleMenuClose}>
                                     Профиль
                                 </MenuItem>
-                                <MenuItem component={Link} to="/logout" onClick={handleMenuClose}>
+                                <MenuItem onClick={handleLogout}>
                                     Выйти
                                 </MenuItem>
                             </Menu>

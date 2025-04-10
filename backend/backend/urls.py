@@ -16,14 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.http import HttpResponse
+from django.http import JsonResponse, HttpResponseNotFound
+from django.views.static import serve
+from django.conf import settings
 
 def home(request):
-    return HttpResponse("<h1>Добро пожаловать в Backend DictionPro!</h1>")
+    return JsonResponse({"message": "Добро пожаловать в Backend DictionPro!"})
+
+def favicon(request):
+    return HttpResponseNotFound()
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('api.urls')),  # Подключаем маршруты приложения api
-    path('api/users/', include('users.urls')),  # Подключаем маршруты приложения users
     path('', home, name='home'),  # Добавляем маршрут для корневого пути
+    path('admin/', admin.site.urls),
+    path('api/', include('api.urls')),  # Подключение маршрутов приложения api
+    path('api/users/', include('users.urls')),  # Подключение маршрутов приложения users
 ]

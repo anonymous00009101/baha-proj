@@ -16,14 +16,27 @@ const Login = ({ setIsAuthenticated }) => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
 
-        // Простая проверка (замените на реальную проверку через API)
-        if (username === 'admin' && password === 'password') {
+        try {
+            const response = await fetch('http://localhost:8000/api/users/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка авторизации');
+            }
+
+            const data = await response.json();
+            localStorage.setItem('accessToken', data.accessToken); // Сохраняем токен
             setIsAuthenticated(true);
             navigate('/'); // Перенаправляем на главную страницу
-        } else {
+        } catch (error) {
             setError('Неверное имя пользователя или пароль');
         }
     };

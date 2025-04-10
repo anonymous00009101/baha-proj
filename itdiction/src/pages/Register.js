@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
     Box,
     TextField,
     Button,
     Typography,
     Paper,
+    Alert,
 } from '@mui/material';
 import Footer from '../components/Footer';
 
@@ -17,6 +18,9 @@ const Register = () => {
     });
 
     const [errors, setErrors] = useState({});
+    const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -38,12 +42,34 @@ const Register = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (validateForm()) {
-            console.log('Регистрация:', formData);
-            alert('Регистрация прошла успешно!');
-            setFormData({ username: '', email: '', password: '' });
+            try {
+                const response = await fetch('http://localhost:8000/api/users/register/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Ошибка регистрации. Проверьте введённые данные.');
+                }
+
+                setSuccessMessage('Регистрация прошла успешно!');
+                setErrorMessage('');
+                setFormData({ username: '', email: '', password: '' });
+
+                // Перенаправление на страницу входа
+                setTimeout(() => navigate('/login'), 2000);
+            } catch (error) {
+                console.error('Ошибка регистрации:', error.message);
+                setErrorMessage(error.message);
+                setSuccessMessage('');
+            }
         }
     };
 
@@ -53,6 +79,16 @@ const Register = () => {
                 <Typography variant="h4" align="center" gutterBottom>
                     Регистрация
                 </Typography>
+                {successMessage && (
+                    <Alert severity="success" sx={{ marginBottom: 3 }}>
+                        {successMessage}
+                    </Alert>
+                )}
+                {errorMessage && (
+                    <Alert severity="error" sx={{ marginBottom: 3 }}>
+                        {errorMessage}
+                    </Alert>
+                )}
                 <form onSubmit={handleSubmit}>
                     <TextField
                         fullWidth

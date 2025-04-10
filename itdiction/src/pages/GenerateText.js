@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import {
     Box,
     TextField,
@@ -7,30 +6,46 @@ import {
     Typography,
     Paper,
     Alert,
+    CircularProgress,
 } from '@mui/material';
 import Footer from '../components/Footer';
 
 const GenerateText = () => {
-    const [inputText, setInputText] = useState('');
-    const [generatedText, setGeneratedText] = useState('');
-    const [error, setError] = useState('');
+    // Состояния
+    const [inputText, setInputText] = useState(''); // Текст, введённый пользователем
+    const [generatedText, setGeneratedText] = useState(''); // Сгенерированный текст
+    const [error, setError] = useState(''); // Сообщение об ошибке
+    const [loading, setLoading] = useState(false); // Состояние загрузки
 
+    // Функция для генерации текста
     const handleGenerateText = async () => {
+        if (!inputText.trim()) {
+            setError('Введите текст для генерации.');
+            return;
+        }
+
+        setLoading(true);
         try {
-            const response = await axios.post(
-                'http://localhost:8000/api/generate-text/',
-                { text: inputText },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`, // Передаём токен в заголовке
-                    },
-                }
-            );
-            setGeneratedText(response.data.generated_text); // Устанавливаем сгенерированный текст
+            const response = await fetch('http://localhost:8000/api/generate-text/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem('accessToken')}`, // Добавляем токен
+                },
+                body: JSON.stringify({ text: inputText }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка при генерации текста');
+            }
+
+            const data = await response.json();
+            setGeneratedText(data.generated_text);
             setError('');
         } catch (err) {
             setError('Ошибка при генерации текста. Проверьте ввод.');
-            console.error(err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -40,6 +55,7 @@ const GenerateText = () => {
                 Генерация текста
             </Typography>
             <Paper elevation={3} sx={{ padding: 3, marginBottom: 4 }}>
+                {/* Поле ввода текста */}
                 <TextField
                     fullWidth
                     multiline
@@ -50,19 +66,23 @@ const GenerateText = () => {
                     onChange={(e) => setInputText(e.target.value)}
                     sx={{ marginBottom: 3 }}
                 />
+                {/* Кнопка для генерации текста */}
                 <Button
                     variant="contained"
                     color="primary"
                     fullWidth
                     onClick={handleGenerateText}
+                    disabled={loading}
                 >
-                    Сгенерировать текст
+                    {loading ? <CircularProgress size={24} /> : 'Сгенерировать текст'}
                 </Button>
+                {/* Отображение ошибки */}
                 {error && (
                     <Alert severity="error" sx={{ marginTop: 3 }}>
                         {error}
                     </Alert>
                 )}
+                {/* Отображение сгенерированного текста */}
                 {generatedText && (
                     <Paper
                         elevation={1}

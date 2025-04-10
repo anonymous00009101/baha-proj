@@ -3,10 +3,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from transformers import pipeline
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
+from .models import Exercise, UserProfile
+from .serializers import ExerciseSerializer, UserProfileSerializer
 
 # Create your views here.
 
 class TextGenerationAPIView(APIView):
+    permission_classes = [IsAuthenticated]  # Только для авторизованных пользователей
+
     def post(self, request):
         text = request.data.get('text', '')
         if not text:
@@ -28,3 +33,12 @@ class ProtectedAPIView(APIView):
 
     def get(self, request):
         return Response({"message": "Вы успешно аутентифицированы!"})
+
+class ExerciseViewSet(viewsets.ModelViewSet):
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseSerializer
+    permission_classes = [IsAuthenticated]  # Только для авторизованных пользователей
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
