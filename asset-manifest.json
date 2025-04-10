@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/baha-proj/static/css/main.54d1538d.css",
+    "main.js": "/baha-proj/static/js/main.d8d1f244.js",
+    "index.html": "/baha-proj/index.html",
+    "main.54d1538d.css.map": "/baha-proj/static/css/main.54d1538d.css.map",
+    "main.d8d1f244.js.map": "/baha-proj/static/js/main.d8d1f244.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.54d1538d.css",
+    "static/js/main.d8d1f244.js"
+  ]
+}
